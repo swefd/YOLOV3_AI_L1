@@ -3,7 +3,6 @@ import ssl
 import os
 import sys
 
-
 def bar_progress(current, total, width=80):
     progress_message = "Downloading: %d%% [%d / %d] bytes" % (current / total * 100, current, total)
     # Don't use print() as it will print in new line every time.
@@ -14,6 +13,12 @@ def bar_progress(current, total, width=80):
 if not os.path.exists('res'):
     os.makedirs('res', exist_ok=False)
 os.chdir('res')
+
+
+
+if not os.path.exists('yolo'):
+    os.makedirs('yolo', exist_ok=False)
+os.chdir('yolo')
 
 ssl._create_default_https_context = ssl._create_unverified_context
 

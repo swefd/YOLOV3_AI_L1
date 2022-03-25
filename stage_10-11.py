@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 
 # Configs
-weights = 'res/yolov3.weights'
-config = 'res/yolov3.cfg'
-classes = 'res/coco.names'
+weights = 'yolo/yolov3.weights'
+config = 'yolo/yolov3.cfg'
+classes = 'yolo/coco.names'
 
 image = 'res/plane.jpeg'
 image = cv2.imread(image)
@@ -15,11 +15,20 @@ names = open(classes).read().splitlines()
 net = cv2.dnn.readNet(weights, config)
 
 
+# Task 10
 def get_output_layers(net):
     layer_names = net.getLayerNames()
     print(net.getUnconnectedOutLayers())
-    output_layers = [layer_names[i [0] - 1] for i in net.getUnconnectedOutLayers()]
+    output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
     return output_layers
+
+
+# Task 11
+outs = net.forward(get_output_layers(net))
+class_ids = []
+confidences = []
+score_threshold = 0.5
+nms_threshold = 0.5
 
 blob = cv2.dnn.blobFromImage(image, scale, (416, 416), True, crop=False)
 get_blob = blob.reshape(blob.shape[2], blob.shape[3], blob.shape[1])
