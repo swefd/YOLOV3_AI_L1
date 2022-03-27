@@ -28,7 +28,7 @@ wget.download('https://raw.githubusercontent.com/swefd/YOLOV3_AI_L1/master/res/p
 wget.download('https://raw.githubusercontent.com/swefd/YOLOV3_AI_L1/master/res/plane.jpeg', bar=bar_progress)
 
 # Go to yolo
-os.chdir('yolo')
+os.chdir('../yolo')
 
 # Names
 wget.download('https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names', bar=bar_progress)
