@@ -21,3 +21,13 @@ net.setInput(blob)
 cv2.imshow("Blob", get_blob)
 cv2.imshow("Image", image)
 cv2.waitKey(0)
+
+
+def get_output_layers(net):
+    layer_names = net.getLayerNames()
+    output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
+    print(output_layers)
+    return output_layers
+
+
+outs = net.forward(get_output_layers(net))

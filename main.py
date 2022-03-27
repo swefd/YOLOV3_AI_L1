@@ -25,6 +25,6 @@ get_blob = blob.reshape(blob.shape[2], blob.shape[3], blob.shape[1])
 cv2.imshow("Blob", get_blob)
 cv2.imshow("Img", image)
 net.setInput(blob)
-cv2.waitKey(0)
+#cv2.waitKey(0)
 
 
