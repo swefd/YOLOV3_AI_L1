@@ -1,30 +1,85 @@
 import cv2
 import numpy as np
 
-# Configs
-
-confing = 'yolo/yolov3.cfg'
-weights = 'yolo/yolov3.weights'
 classes = 'yolo/coco.names'
-names = open(classes).read().splitlines()
+config = 'yolo/yolov3.cfg'
+weights = 'yolo/yolov3.weights'
 
 image = cv2.imread('res/plane.jpeg')
+
 width = image.shape[0]
 height = image.shape[1]
-
-print("W: ", width)
-print("H: ", height)
-
-# 1/255
-scale = 0.00392
-net = cv2.dnn.readNet(weights, confing)
+scale = 0.00392  # = 1/255
+names = open(classes).read().splitlines()
+net = cv2.dnn.readNet(weights, config)
 
 blob = cv2.dnn.blobFromImage(image, scale, (416, 416), True, crop=False)
 get_blob = blob.reshape(blob.shape[2], blob.shape[3], blob.shape[1])
 
-cv2.imshow("Blob", get_blob)
-cv2.imshow("Img", image)
 net.setInput(blob)
-#cv2.waitKey(0)
+
+
+def get_output_layers(net):
+    layer_names = net.getLayerNames()
+    output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
+    print(output_layers)
+    return output_layers
+
+def draw_prediction(img, class_id, confidence, x, y, x1, y1):
+    label = str(names[class_id])
+    cv2.rectangle(img, (x, y), (x1, y1), (255, 0, 0), 2)
+    cv2.putText(img, label, (x-10, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
+
+
+
+outs = net.forward(get_output_layers(net))
+
+class_ids = []
+boxes = []
+confidences = []
+score_threshold = 0.5
+nms_threshold = 0.4
+
+for out in outs:
+    for detection in out:
+        scores = detection[5:]
+        class_id = np.argmax(scores)
+        confidence = scores[class_id]
+        if confidence > score_threshold:
+            center_x = int(detection[0] * width)
+            center_y = int(detection[1] * height)
+            w = int(detection[2] * width)
+            h = int(detection[3] * height)
+            x = center_x - w / 2
+            y = center_y - h / 2
+            class_ids.append(class_id)
+            confidences.append(float(confidence))
+            boxes.append([x, y, w, h])
+
+indeces = cv2.dnn.NMSBoxes(boxes, confidences, score_threshold, nms_threshold)
+
+print("Indices: ")
+print(indeces)
+
+for i in indeces:
+    #i = i[0]
+    box = boxes[i]
+    print("Box: ")
+    print(box)
+    x = box[0]
+    y = box[1]
+    w = box[2]
+    h = box[3]
+    draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x + w), round(y + h))
+
+cv2.imshow("Prediction", image)
+cv2.waitKey(0)
+
+
+
+
+
+
+
 
 
