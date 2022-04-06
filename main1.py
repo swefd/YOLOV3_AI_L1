@@ -10,11 +10,13 @@ image = cv2.imread('res/plane.jpeg')
 width = image.shape[0]
 height = image.shape[1]
 
-scale = 0.00392  # = 1/255
+scale = 1/255 #0.00392  # = 1/255
 names = open(classes).read().splitlines()
 net = cv2.dnn.readNet(weights, config)
 
-blob = cv2.dnn.blobFromImage(image, scale, (416, 416), True, False)
+#resized = cv2.resize(image, (100, 100))
+
+blob = cv2.dnn.blobFromImage(image, scale, (416, 416), [0, 0, 0], False, crop=False)
 get_blob = blob.reshape(blob.shape[2], blob.shape[3], blob.shape[1])
 
 net.setInput(blob)
@@ -34,6 +36,8 @@ def drawPrediction(image, class_id, confidence, x, y, x1, y1):
 
 
 outs = net.forward(get_output_layers(net))
+
+print("Ots: " + str(outs[0].shape))
 
 class_ids = []
 boxes = []
@@ -60,7 +64,7 @@ for out in outs:
 indices = cv2.dnn.NMSBoxes(boxes, confidences, score_threshold, nms_threshold)
 
 print("Indices: ")
-print(indices)
+print(indices[0])
 
 for i in indices:
     #i = i[0]
