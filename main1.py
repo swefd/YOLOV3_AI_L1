@@ -7,8 +7,8 @@ weights = 'yolo/yolov3.weights'
 
 image = cv2.imread('res/plane.jpeg')
 
-width = image.shape[0]
-height = image.shape[1]
+width = image.shape[1]
+height = image.shape[0]
 
 scale = 1/255 #0.00392  # = 1/255
 names = open(classes).read().splitlines()
@@ -16,7 +16,7 @@ net = cv2.dnn.readNet(weights, config)
 
 #resized = cv2.resize(image, (100, 100))
 
-blob = cv2.dnn.blobFromImage(image, scale, (416, 416), [0, 0, 0], False, crop=False)
+blob = cv2.dnn.blobFromImage(image, scale, (320, 320), [0, 0, 0], False, crop=False)
 get_blob = blob.reshape(blob.shape[2], blob.shape[3], blob.shape[1])
 
 net.setInput(blob)
@@ -37,7 +37,7 @@ def drawPrediction(image, class_id, confidence, x, y, x1, y1):
 
 outs = net.forward(get_output_layers(net))
 
-print("Ots: " + str(outs[0].shape))
+print("Ots: " + str(outs[0][0]))
 
 class_ids = []
 boxes = []
@@ -51,12 +51,12 @@ for out in outs:
         class_id = np.argmax(scores)
         confidence = scores[class_id]
         if confidence > score_threshold:
-            center_x = int(detection[0] * width)
-            center_y = int(detection[1] * height)
+            #center_x =
+            #center_y = int(detection[1] * height)
             w = int(detection[2] * width)
             h = int(detection[3] * height)
-            x = center_x - w / 2
-            y = center_y - h / 2
+            x = int((detection[0] * width) - w / 2)
+            y = int((detection[1] * height) - h / 2)
             class_ids.append(class_id)
             confidences.append(float(confidence))
             boxes.append([x, y, w, h])
