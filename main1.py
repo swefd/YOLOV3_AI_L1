@@ -10,16 +10,19 @@ image = cv2.imread('res/plane.jpeg')
 width = image.shape[1]
 height = image.shape[0]
 
-scale = 1/255 #0.00392  # = 1/255
+scale = 1 / 255  # 0.00392  # = 1/255
 names = open(classes).read().splitlines()
 net = cv2.dnn.readNet(weights, config)
 
-#resized = cv2.resize(image, (100, 100))
+# resized = cv2.resize(image, (100, 100))
 
 blob = cv2.dnn.blobFromImage(image, scale, (320, 320), [0, 0, 0], False, crop=False)
 get_blob = blob.reshape(blob.shape[2], blob.shape[3], blob.shape[1])
 
-net.setInput(blob)
+
+cv2.imshow("Blob ", get_blob)
+cv2.waitKey(0)
+
 
 
 def get_output_layers(net):
@@ -51,8 +54,8 @@ for out in outs:
         class_id = np.argmax(scores)
         confidence = scores[class_id]
         if confidence > score_threshold:
-            #center_x =
-            #center_y = int(detection[1] * height)
+            # center_x =
+            # center_y = int(detection[1] * height)
             w = int(detection[2] * width)
             h = int(detection[3] * height)
             x = int((detection[0] * width) - w / 2)
@@ -67,7 +70,7 @@ print("Indices: ")
 print(indices[0])
 
 for i in indices:
-    #i = i[0]
+    # i = i[0]
     box = boxes[i]
     print("Box")
     print(box)
@@ -79,13 +82,3 @@ for i in indices:
 
 cv2.imshow("Prediction", image)
 cv2.waitKey(0)
-
-
-
-
-
-
-
-
-
-
